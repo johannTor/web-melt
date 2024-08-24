@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Carrois+Gothic+SC&display=swap" rel="stylesheet">
+    <title>MeltDemo</title>
+  </head>
+  <body>
+    <div id="app">
+      <nav>
+        <ul>
+          <li data-game="1">DOOM</li>
+          <li data-game="2">DOOM 2</li>
+          <li data-game="3">DOOM 3</li>
+          <li data-game="4">DOOM (2016)</li>
+          <li data-game="5">DOOM ETERNAL</li>
+        </ul>
+      </nav>
+      <main id="pageContent">
+        <div id="pageContainer">
+          <div id="coverContainer">
+            <img src="/Cover.webp" alt="cover-demo" id="coverImg">
+          </div>
+          <section id="infoContainer">
+            <span id="infoText">
+              Doom is a first-person shooter game developed and published by id Software. Released on December 10, 1993, for DOS, it is the first installment in the Doom franchise. The player assumes the role of a space marine, later unofficially referred to as Doomguy, fighting through hordes of undead humans and invading demons. The game begins on the moons of Mars and finishes in hell, with the player traversing each level to find its exit or defeat its final boss. It is an early example of 3D graphics in video games, and has enemies and objects as 2D images, a technique sometimes referred to as 2.5D graphics.
+            </span>
+          </section>
+          <button type="button" id="takeShot">Screen</button>
+        </div>
+      </main>
+      <!-- <canvas id="overlayCanvas"></canvas> -->
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
