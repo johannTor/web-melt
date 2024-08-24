@@ -1,11 +1,16 @@
 import html2canvas from "html2canvas";
+import gameData from "./data";
 
 // const appEl = document.getElementById('app');
 const mainEl = document.getElementById('pageContent');
 const buttonEl = document.getElementById('takeShot');
+const navItems = document.querySelectorAll('nav > ul > li');
+console.log('All LI:', navItems);
 
+let numOfCols = 0;
+let isMelting = false;
 
-function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, colHeight, duration) {
+function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, colHeight, duration, columnCount) {
   let startTime = null;
   
   function draw(timestamp) {
@@ -26,6 +31,14 @@ function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, col
       // Continue animating until the duration is reached
       if (progress < 1) {
           requestAnimationFrame(draw);
+      } else {
+        numOfCols += 1;
+        if (numOfCols >= columnCount) {
+          console.log('Removed', numOfCols);
+          mainEl.removeChild(mainEl.firstChild);
+          numOfCols = 0;
+          isMelting = false;
+        } // Remove the canvas when last column is at the bottom
       }
   }
 
@@ -49,11 +62,11 @@ const manipulateCanvas = (canvas) => {
   for(let x = 0; x < canvasWidth - columnTargetWidth; x += columnTargetWidth) {
     columns.push({ 
       position: { x, y: 0, width: columnTargetWidth, height: canvasHeight },
-      imageData: ctx.getImageData(x, 0, columnTargetWidth, canvasHeight) });
+      imageData: ctx.getImageData(x, 0, columnTargetWidth + 2, canvasHeight) }); // +2 for the colWidth to eliminate tiny gaps
   }
 
   // ToDo: Select image based on link clicked...
-  mainEl.style.backgroundImage = 'url(/d2m1.png)';
+  // mainEl.style.backgroundImage = 'url(/d2m1.png)';
 
   console.log('cols', columns);
 
@@ -72,7 +85,8 @@ const manipulateCanvas = (canvas) => {
         canvasHeight,
         columns[i].position.width,
         columns[i].position.height,
-        1500
+        1500,
+        columns.length,
       );
     }, possibleDelays[baseDelayIndex]);
     baseDelayIndex = getNextIndex(baseDelayIndex, possibleDelays);
@@ -98,8 +112,8 @@ const getNextIndex = (currentIndex, possibleValues) => {
   return currentIndex += 1;
 }
 
-const handleClick = () => {
-  console.log('Hello world');
+const startMelt = (pageSelected) => {
+  isMelting = true;
   const appWidth = mainEl.offsetWidth;
   const appHeight = mainEl.offsetHeight;
   html2canvas(mainEl, { width: appWidth, height: appHeight }).then(function(canvas) {
@@ -108,9 +122,51 @@ const handleClick = () => {
     }
     mainEl.appendChild(canvas);
     manipulateCanvas(canvas);
+    loadMainContent(pageSelected);
   });
 };
 
+const loadMainContent = (id) => {
+  mainEl.style.backgroundImage = `url(${gameData[id].backgroundImage})`;
+  const pageContainer = document.createElement('div');
+  pageContainer.setAttribute('id', 'pageContainer');
+  const coverContainer = document.createElement('div');
+  coverContainer.setAttribute('id', 'coverContainer');
+  const imageTag = document.createElement('img');
+  imageTag.setAttribute('id', 'coverImg');
+  imageTag.setAttribute('alt', 'cover-demo');
+  imageTag.setAttribute('src', gameData[id].cover);
+  // ToDo: Add image src
+  const sectionContainer = document.createElement('section');
+  sectionContainer.setAttribute('id', 'infoContainer');
+  const sectionText = document.createElement('span');
+  sectionText.setAttribute('id', 'infoText');
+  sectionText.innerText = gameData[id].description;
+
+  coverContainer.appendChild(imageTag);
+  sectionContainer.appendChild(sectionText);
+
+  pageContainer.appendChild(coverContainer);
+  pageContainer.appendChild(sectionContainer);
+  mainEl.appendChild(pageContainer);
+}
+
+const handleNavClick = (ev) => {
+  if (isMelting) return;
+  const pageSelected = ev.target.dataset.game;
+  for (let i = 0; i < navItems.length; i++) {
+    navItems[i].classList.remove('activeNav');
+  }
+  navItems[pageSelected - 1].classList.add('activeNav');
+  startMelt(pageSelected);
+  console.log('pageSelected', pageSelected, typeof pageSelected);
+}
+
 document.addEventListener('DOMContentLoaded', (event) => {
-  buttonEl.addEventListener('click', handleClick);
-})
+  // buttonEl.addEventListener('click', handleClick);
+  for(let i = 0; i < navItems.length; i++) {
+    navItems[i].addEventListener('click', handleNavClick);
+  }
+});
+
+loadMainContent(1);

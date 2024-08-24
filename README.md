@@ -8,3 +8,7 @@ Demo:
 Generic site with navbar at the top, and big content/hero area as it's pages...
 
 Subject: doom?
+
+ToDo:
+Append text and covers of the games in navbar
+Melt navbar?
