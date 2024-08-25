@@ -1,6 +1,6 @@
 const gameData = {
   1: {
-    cover: 'covers/Cover.webp',
+    cover: 'covers/doom1cover.jpg',
     description: 'Doom is a first-person shooter game developed and published by id Software. Released on December 10, 1993, for DOS, it is the first installment in the Doom franchise. The player assumes the role of a space marine, later unofficially referred to as Doomguy, fighting through hordes of undead humans and invading demons. The game begins on the moons of Mars and finishes in hell, with the player traversing each level to find its exit or defeat its final boss. It is an early example of 3D graphics in video games, and has enemies and objects as 2D images, a technique sometimes referred to as 2.5D graphics.',
     backgroundImage: '/bg/e1m1.png',
   },

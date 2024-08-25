@@ -12,4 +12,3 @@ Subject: doom?
 ToDo:
 Append text and covers of the games in navbar
 Melt navbar?
-Fix pop in during initial visit

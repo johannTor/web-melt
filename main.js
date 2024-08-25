@@ -2,10 +2,11 @@ import html2canvas from "html2canvas";
 import gameData from "./data";
 import preloadImage from "./helpers";
 
-// const appEl = document.getElementById('app');
 const mainEl = document.getElementById('pageContent');
 const navItems = document.querySelectorAll('nav > ul > li');
 const navEl = document.querySelector('nav');
+const infoText = document.getElementById('infoText');
+const coverImgEl = document.getElementById('coverImg');
 console.log('All LI:', navItems);
 
 let numOfCols = 0;
@@ -36,7 +37,7 @@ function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, col
         numOfCols += 1;
         if (numOfCols >= columnCount) {
           console.log('Removed', numOfCols);
-          mainEl.removeChild(mainEl.firstChild);
+          mainEl.removeChild(mainEl.lastChild);
           numOfCols = 0;
           isMelting = false;
         } // Remove the canvas when last column is at the bottom
@@ -53,7 +54,7 @@ function getRandomInt(min, max) {
 }
 
 const manipulateCanvas = (canvas) => {
-  console.log('Manip started');
+  console.log('Manipulate started', canvas);
   const ctx = canvas.getContext('2d');
   const canvasWidth = canvas.offsetWidth;
   const canvasHeight = canvas.offsetHeight;
@@ -70,7 +71,7 @@ const manipulateCanvas = (canvas) => {
   console.log('cols', columns);
 
   // Mimic Doom's random delay feature, get a first initial delay value, then increase, decrease or stay the same for each column
-  const possibleDelays = Array.from({ length: 10 }, (current, i) => (i + 1) * 100);
+  const possibleDelays = Array.from({ length: 10 }, (current, i) => i * 100);
   let baseDelayIndex = getRandomInt(0, possibleDelays.length);
 
   for (let i = 0; i < columns.length; i++) {
@@ -117,9 +118,6 @@ const startMelt = (pageSelected) => {
   const appWidth = mainEl.offsetWidth;
   const appHeight = mainEl.offsetHeight;
   html2canvas(mainEl, { width: appWidth, height: appHeight }).then(function(canvas) {
-    while (mainEl.firstChild) {
-      mainEl.removeChild(mainEl.lastChild);
-    }
     mainEl.appendChild(canvas);
     loadMainContent(pageSelected).then((res) => {
       manipulateCanvas(canvas);
@@ -131,28 +129,10 @@ const loadMainContent = async (id) => {
   await preloadImage(gameData[id].backgroundImage, () => {
     mainEl.style.backgroundImage = `url(${gameData[id].backgroundImage})`;
   })
-  const pageContainer = document.createElement('div');
-  pageContainer.setAttribute('id', 'pageContainer');
-  const coverContainer = document.createElement('div');
-  coverContainer.setAttribute('id', 'coverContainer');
-  const imageTag = document.createElement('img');
-  imageTag.setAttribute('id', 'coverImg');
-  imageTag.setAttribute('alt', 'cover-demo');
   await preloadImage(gameData[id].cover, () => {
-    imageTag.setAttribute('src', gameData[id].cover);
+    coverImgEl.setAttribute('src', gameData[id].cover);
   })
-  const sectionContainer = document.createElement('section');
-  sectionContainer.setAttribute('id', 'infoContainer');
-  const sectionText = document.createElement('span');
-  sectionText.setAttribute('id', 'infoText');
-  sectionText.innerText = gameData[id].description;
-
-  coverContainer.appendChild(imageTag);
-  sectionContainer.appendChild(sectionText);
-
-  pageContainer.appendChild(coverContainer);
-  pageContainer.appendChild(sectionContainer);
-  mainEl.appendChild(pageContainer);
+  infoText.innerText = gameData[id].description;
 }
 
 const handleNavClick = (ev) => {
