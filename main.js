@@ -7,6 +7,7 @@ const navItems = document.querySelectorAll('nav > ul > li');
 const navEl = document.querySelector('nav');
 const infoText = document.getElementById('infoText');
 const coverImgEl = document.getElementById('coverImg');
+const animateDuration = 1000;
 console.log('All LI:', navItems);
 
 let numOfCols = 0;
@@ -59,7 +60,7 @@ const manipulateCanvas = (canvas) => {
   const canvasWidth = canvas.offsetWidth;
   const canvasHeight = canvas.offsetHeight;
   // How wide should each column be
-  const columnTargetWidth = canvasWidth / 160; // 160 slices in the OG doom
+  const columnTargetWidth = canvasWidth / 180; // 160 slices in the OG doom
   const columns = [];
 
   for(let x = 0; x < canvasWidth; x += columnTargetWidth) {
@@ -71,7 +72,7 @@ const manipulateCanvas = (canvas) => {
   console.log('cols', columns);
 
   // Mimic Doom's random delay feature, get a first initial delay value, then increase, decrease or stay the same for each column
-  const possibleDelays = Array.from({ length: 10 }, (current, i) => i * 100);
+  const possibleDelays = Array.from({ length: 8 }, (current, i) => i * 100); // Delays are at 100ms intervals
   let baseDelayIndex = getRandomInt(0, possibleDelays.length);
 
   for (let i = 0; i < columns.length; i++) {
@@ -86,7 +87,7 @@ const manipulateCanvas = (canvas) => {
         canvasHeight + navEl.offsetHeight + 50,
         columns[i].position.width,
         columns[i].position.height,
-        1500,
+        animateDuration,
         columns.length,
       );
     }, possibleDelays[baseDelayIndex]);
