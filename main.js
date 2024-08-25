@@ -23,7 +23,7 @@ function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, col
       const currentY = startY + (endY - startY) * progress;
 
       // Clear the canvas and draw the rectangle at the new position
-      ctx.clearRect(startX, startY, colWidth, colHeight + navEl.offsetHeight); // + offsetHeight since it seems to stop short of nav height
+      ctx.clearRect(startX, startY, colWidth, colHeight + navEl.offsetHeight + 50); // + offsetHeight since it seems to stop short of nav height
 
       // Draw the column at new position
       ctx.putImageData(imageData, currentX, currentY);
@@ -80,10 +80,10 @@ const manipulateCanvas = (canvas) => {
         columns[i].position.x,
         columns[i].position.y,
         columns[i].position.x,
-        canvasHeight + navEl.offsetHeight,
+        canvasHeight + navEl.offsetHeight + 50,
         columns[i].position.width,
         columns[i].position.height,
-        2000,
+        1500,
         columns.length,
       );
     }, possibleDelays[baseDelayIndex]);
