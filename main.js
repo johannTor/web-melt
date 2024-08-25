@@ -3,8 +3,8 @@ import gameData from "./data";
 
 // const appEl = document.getElementById('app');
 const mainEl = document.getElementById('pageContent');
-const buttonEl = document.getElementById('takeShot');
 const navItems = document.querySelectorAll('nav > ul > li');
+const navEl = document.querySelector('nav');
 console.log('All LI:', navItems);
 
 let numOfCols = 0;
@@ -23,7 +23,7 @@ function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, col
       const currentY = startY + (endY - startY) * progress;
 
       // Clear the canvas and draw the rectangle at the new position
-      ctx.clearRect(startX, startY, colWidth, colHeight + 200); // + 200 since it doesnt clear all the way down?
+      ctx.clearRect(startX, startY, colWidth, colHeight + navEl.offsetHeight); // + offsetHeight since it seems to stop short of nav height
 
       // Draw the column at new position
       ctx.putImageData(imageData, currentX, currentY);
@@ -65,9 +65,6 @@ const manipulateCanvas = (canvas) => {
       imageData: ctx.getImageData(x, 0, columnTargetWidth + 2, canvasHeight) }); // +2 for the colWidth to eliminate tiny gaps
   }
 
-  // ToDo: Select image based on link clicked...
-  // mainEl.style.backgroundImage = 'url(/d2m1.png)';
-
   console.log('cols', columns);
 
   // Mimic Doom's random delay feature, get a first initial delay value, then increase, decrease or stay the same for each column
@@ -78,14 +75,15 @@ const manipulateCanvas = (canvas) => {
     // Generate a random delay between 0 and 1000 ms
     setTimeout(() => {
       animateColumn(
-        ctx, columns[i].imageData,
+        ctx,
+        columns[i].imageData,
         columns[i].position.x,
         columns[i].position.y,
         columns[i].position.x,
-        canvasHeight,
+        canvasHeight + navEl.offsetHeight,
         columns[i].position.width,
         columns[i].position.height,
-        1500,
+        2000,
         columns.length,
       );
     }, possibleDelays[baseDelayIndex]);
@@ -136,7 +134,6 @@ const loadMainContent = (id) => {
   imageTag.setAttribute('id', 'coverImg');
   imageTag.setAttribute('alt', 'cover-demo');
   imageTag.setAttribute('src', gameData[id].cover);
-  // ToDo: Add image src
   const sectionContainer = document.createElement('section');
   sectionContainer.setAttribute('id', 'infoContainer');
   const sectionText = document.createElement('span');
