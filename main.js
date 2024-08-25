@@ -53,6 +53,7 @@ function getRandomInt(min, max) {
 }
 
 const manipulateCanvas = (canvas) => {
+  console.log('Manip started');
   const ctx = canvas.getContext('2d');
   const canvasWidth = canvas.offsetWidth;
   const canvasHeight = canvas.offsetHeight;
@@ -120,8 +121,9 @@ const startMelt = (pageSelected) => {
       mainEl.removeChild(mainEl.lastChild);
     }
     mainEl.appendChild(canvas);
-    manipulateCanvas(canvas);
-    loadMainContent(pageSelected);
+    loadMainContent(pageSelected).then((res) => {
+      manipulateCanvas(canvas);
+    });
   });
 };
 
