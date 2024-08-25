@@ -1,4 +1,4 @@
-const preloadBackgroundImage = (url, callback) => {
+const preloadImage = (url, callback) => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.src = url;
@@ -16,4 +16,4 @@ const preloadBackgroundImage = (url, callback) => {
   });
 }
 
-export default preloadBackgroundImage;
+export default preloadImage;

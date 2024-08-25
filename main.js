@@ -1,6 +1,6 @@
 import html2canvas from "html2canvas";
 import gameData from "./data";
-import preloadBackgroundImage from "./helpers";
+import preloadImage from "./helpers";
 
 // const appEl = document.getElementById('app');
 const mainEl = document.getElementById('pageContent');
@@ -126,7 +126,7 @@ const startMelt = (pageSelected) => {
 };
 
 const loadMainContent = async (id) => {
-  await preloadBackgroundImage(gameData[id].backgroundImage, () => {
+  await preloadImage(gameData[id].backgroundImage, () => {
     mainEl.style.backgroundImage = `url(${gameData[id].backgroundImage})`;
   })
   const pageContainer = document.createElement('div');
@@ -136,7 +136,9 @@ const loadMainContent = async (id) => {
   const imageTag = document.createElement('img');
   imageTag.setAttribute('id', 'coverImg');
   imageTag.setAttribute('alt', 'cover-demo');
-  imageTag.setAttribute('src', gameData[id].cover);
+  await preloadImage(gameData[id].cover, () => {
+    imageTag.setAttribute('src', gameData[id].cover);
+  })
   const sectionContainer = document.createElement('section');
   sectionContainer.setAttribute('id', 'infoContainer');
   const sectionText = document.createElement('span');
