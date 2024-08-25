@@ -72,7 +72,7 @@ main {
   gap: 2rem;
   /* padding: 2rem; */
   align-items: center;
-  background-image: url('/e1m1.png');
+  background-color: #000;
   background-size: cover;
 }
 

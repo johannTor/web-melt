@@ -1,5 +1,6 @@
 import html2canvas from "html2canvas";
 import gameData from "./data";
+import preloadBackgroundImage from "./helpers";
 
 // const appEl = document.getElementById('app');
 const mainEl = document.getElementById('pageContent');
@@ -59,7 +60,7 @@ const manipulateCanvas = (canvas) => {
   const columnTargetWidth = canvasWidth / 160; // 160 slices in the OG doom
   const columns = [];
 
-  for(let x = 0; x < canvasWidth - columnTargetWidth; x += columnTargetWidth) {
+  for(let x = 0; x < canvasWidth; x += columnTargetWidth) {
     columns.push({ 
       position: { x, y: 0, width: columnTargetWidth, height: canvasHeight },
       imageData: ctx.getImageData(x, 0, columnTargetWidth + 2, canvasHeight) }); // +2 for the colWidth to eliminate tiny gaps
@@ -124,8 +125,10 @@ const startMelt = (pageSelected) => {
   });
 };
 
-const loadMainContent = (id) => {
-  mainEl.style.backgroundImage = `url(${gameData[id].backgroundImage})`;
+const loadMainContent = async (id) => {
+  await preloadBackgroundImage(gameData[id].backgroundImage, () => {
+    mainEl.style.backgroundImage = `url(${gameData[id].backgroundImage})`;
+  })
   const pageContainer = document.createElement('div');
   pageContainer.setAttribute('id', 'pageContainer');
   const coverContainer = document.createElement('div');
