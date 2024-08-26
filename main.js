@@ -8,10 +8,12 @@ const navEl = document.querySelector('nav');
 const infoText = document.getElementById('infoText');
 const coverImgEl = document.getElementById('coverImg');
 const animateDuration = 1000;
-console.log('All LI:', navItems);
 
 let numOfCols = 0;
 let isMelting = false;
+
+// Columns leave trails at bottom... make them move further at higher res
+const bonusOffset = screen.availHeight <= 1080 ? 50 : (screen.availHeight > 1080 && screen.availHeight <= 1440) ? 200 : 500;
 
 function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, colHeight, duration, columnCount) {
   let startTime = null;
@@ -26,7 +28,7 @@ function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, col
       const currentY = startY + (endY - startY) * progress;
 
       // Clear the canvas and draw the rectangle at the new position
-      ctx.clearRect(startX, startY, colWidth, colHeight + navEl.offsetHeight + 50); // + offsetHeight since it seems to stop short of nav height
+      ctx.clearRect(startX, startY, colWidth, colHeight + navEl.offsetHeight + bonusOffset); // + offsetHeight since it seems to stop short of nav height
 
       // Draw the column at new position
       ctx.putImageData(imageData, currentX, currentY);
@@ -84,7 +86,7 @@ const manipulateCanvas = (canvas) => {
         columns[i].position.x,
         columns[i].position.y,
         columns[i].position.x,
-        canvasHeight + navEl.offsetHeight + 50,
+        canvasHeight + navEl.offsetHeight + bonusOffset,
         columns[i].position.width,
         columns[i].position.height,
         animateDuration,
@@ -144,7 +146,6 @@ const handleNavClick = (ev) => {
   }
   navItems[pageSelected - 1].classList.add('activeNav');
   startMelt(pageSelected);
-  console.log('pageSelected', pageSelected, typeof pageSelected);
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
