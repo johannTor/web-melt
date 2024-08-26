@@ -116,9 +116,9 @@ const getNextIndex = (currentIndex, possibleValues) => {
 
 const startMelt = (pageSelected) => {
   isMelting = true;
-  const appWidth = mainEl.offsetWidth;
-  const appHeight = mainEl.offsetHeight;
-  html2canvas(mainEl, { width: appWidth, height: appHeight }).then(function(canvas) {
+  const mainWidth = mainEl.offsetWidth;
+  const mainHeight = mainEl.offsetHeight;
+  html2canvas(mainEl, { width: mainWidth, height: mainHeight, scale: 1 }).then(function(canvas) {
     mainEl.appendChild(canvas);
     loadMainContent(pageSelected).then((res) => {
       manipulateCanvas(canvas);
