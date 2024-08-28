@@ -3,19 +3,54 @@ import gameData from "./data";
 import preloadImage from "./helpers";
 
 const mainEl = document.getElementById('pageContent');
+const pageContainerEl = document.getElementById('pageContainer');
+const canvasContainerEl = document.getElementById('canvasContainer');
 const navItems = document.querySelectorAll('nav > ul > li');
 const navEl = document.querySelector('nav');
 const infoText = document.getElementById('infoText');
 const coverImgEl = document.getElementById('coverImg');
 const animateDuration = 1000;
 
-let numOfCols = 0;
-let isMelting = false;
+class CanvasInfo {
+  constructor(colsDeleted, columns) {
+    this.colsDeleted = colsDeleted;
+    this.columns = columns;
+  }
+
+  getColumnsLength() {
+    return this.columns.length;
+  }
+
+  getColumnAt(index) {
+    return this.columns[index];
+  }
+
+  getColsDeleted() {
+    return this.colsDeleted;
+  }
+
+  addColumn(newCol) {
+    this.columns.push(newCol);
+  }
+
+  setColumns(cols) {
+    this.columns = cols;
+  }
+
+  deleteColumn() {
+    this.colsDeleted++;
+  }
+}
 
 // Columns leave trails at bottom... make them move further at higher res
 const bonusOffset = screen.availHeight <= 1080 ? 50 : (screen.availHeight > 1080 && screen.availHeight <= 1440) ? 200 : 500;
 
-function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, colHeight, duration, columnCount) {
+function animateColumn(i, ctx, endY, duration, canvasInfo) {
+  const columnCount = canvasInfo.getColumnsLength();
+  const columnAtI = canvasInfo.getColumnAt(i);
+  const { imageData, position: { x: startX, y: startY, width: colWidth, height: colHeight } } = columnAtI;
+  const endX = startX;
+
   let startTime = null;
   
   function draw(timestamp) {
@@ -37,12 +72,9 @@ function animateColumn(ctx, imageData, startX, startY, endX, endY, colWidth, col
       if (progress < 1) {
           requestAnimationFrame(draw);
       } else {
-        numOfCols += 1;
-        if (numOfCols >= columnCount) {
-          console.log('Removed', numOfCols);
-          mainEl.removeChild(mainEl.lastChild);
-          numOfCols = 0;
-          isMelting = false;
+        canvasInfo.deleteColumn();
+        if (canvasInfo.getColsDeleted() >= columnCount) {
+          canvasContainerEl.removeChild(canvasContainerEl.lastChild);
         } // Remove the canvas when last column is at the bottom
       }
   }
@@ -56,41 +88,36 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
 }
 
-const manipulateCanvas = (canvas) => {
+const manipulateCanvas = (canvas, newCanvasInfo) => {
   console.log('Manipulate started', canvas);
   const ctx = canvas.getContext('2d');
   const canvasWidth = canvas.offsetWidth;
   const canvasHeight = canvas.offsetHeight;
   // How wide should each column be
   const columnTargetWidth = canvasWidth / 180; // 160 slices in the OG doom
-  const columns = [];
+  // const columns = [];
 
   for(let x = 0; x < canvasWidth; x += columnTargetWidth) {
-    columns.push({ 
+    newCanvasInfo.addColumn({ 
       position: { x, y: 0, width: columnTargetWidth, height: canvasHeight },
       imageData: ctx.getImageData(x, 0, columnTargetWidth + 2, canvasHeight) }); // +2 for the colWidth to eliminate tiny gaps
   }
 
-  console.log('cols', columns);
+  // console.log('cols', newCanvasInfo.columns);
 
   // Mimic Doom's random delay feature, get a first initial delay value, then increase, decrease or stay the same for each column
   const possibleDelays = Array.from({ length: 10 }, (current, i) => i * 50); // Delays are at 50ms intervals
   let baseDelayIndex = getRandomInt(0, possibleDelays.length);
 
-  for (let i = 0; i < columns.length; i++) {
+  for (let i = 0; i < newCanvasInfo.getColumnsLength(); i++) {
     // Generate a random delay between 0 and 1000 ms
     setTimeout(() => {
       animateColumn(
+        i,
         ctx,
-        columns[i].imageData,
-        columns[i].position.x,
-        columns[i].position.y,
-        columns[i].position.x,
         canvasHeight + navEl.offsetHeight + bonusOffset,
-        columns[i].position.width,
-        columns[i].position.height,
         animateDuration,
-        columns.length,
+        newCanvasInfo,
       );
     }, possibleDelays[baseDelayIndex]);
     baseDelayIndex = getNextIndex(baseDelayIndex, possibleDelays);
@@ -117,20 +144,21 @@ const getNextIndex = (currentIndex, possibleValues) => {
 }
 
 const startMelt = (pageSelected) => {
-  isMelting = true;
   const mainWidth = mainEl.offsetWidth;
   const mainHeight = mainEl.offsetHeight;
-  html2canvas(mainEl, { width: mainWidth, height: mainHeight, scale: 1 }).then(function(canvas) {
-    mainEl.appendChild(canvas);
+  // console.log('container', canvasContainerEl);
+  const newCanvasInfo = new CanvasInfo(0, []);
+  html2canvas(pageContainerEl, { width: mainWidth, height: mainHeight, scale: 1 }).then(function(canvas) {
+    canvasContainerEl.insertBefore(canvas, canvasContainerEl.firstChild);
     loadMainContent(pageSelected).then((res) => {
-      manipulateCanvas(canvas);
+      manipulateCanvas(canvas, newCanvasInfo);
     });
   });
 };
 
 const loadMainContent = async (id) => {
   await preloadImage(gameData[id].backgroundImage, () => {
-    mainEl.style.backgroundImage = `url(${gameData[id].backgroundImage})`;
+    pageContainerEl.style.backgroundImage = `url(${gameData[id].backgroundImage})`;
   })
   await preloadImage(gameData[id].cover, () => {
     coverImgEl.setAttribute('src', gameData[id].cover);
@@ -139,7 +167,7 @@ const loadMainContent = async (id) => {
 }
 
 const handleNavClick = (ev) => {
-  if (isMelting) return;
+  // if (isMelting) return;
   const pageSelected = ev.target.dataset.game;
   for (let i = 0; i < navItems.length; i++) {
     navItems[i].classList.remove('activeNav');

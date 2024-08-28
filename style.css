@@ -72,17 +72,26 @@ main {
   gap: 2rem;
   /* padding: 2rem; */
   align-items: center;
-  background-color: #000;
+  background-color: #c1c1c1;
   background-size: cover;
 }
 
 #pageContainer {
   height: 100%;
-  margin: 2rem;
+  /* margin: 2rem; */
+  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2rem;
+  background-color: #000;
+  background-size: cover;
+}
+
+#canvasContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #infoContainer {
