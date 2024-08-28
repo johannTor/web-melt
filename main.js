@@ -106,7 +106,7 @@ const manipulateCanvas = (canvas, newCanvasInfo) => {
   // console.log('cols', newCanvasInfo.columns);
 
   // Mimic Doom's random delay feature, get a first initial delay value, then increase, decrease or stay the same for each column
-  const possibleDelays = Array.from({ length: 10 }, (current, i) => i * 50); // Delays are at 100ms intervals
+  const possibleDelays = Array.from({ length: 10 }, (current, i) => i * 50); // Delays are at 50ms intervals
   let baseDelayIndex = getRandomInt(0, possibleDelays.length);
 
   for (let i = 0; i < newCanvasInfo.getColumnsLength(); i++) {
