@@ -103,10 +103,10 @@ const manipulateCanvas = (canvas, newCanvasInfo) => {
       imageData: ctx.getImageData(x, 0, columnTargetWidth + 2, canvasHeight) }); // +2 for the colWidth to eliminate tiny gaps
   }
 
-  console.log('cols', newCanvasInfo.columns);
+  // console.log('cols', newCanvasInfo.columns);
 
   // Mimic Doom's random delay feature, get a first initial delay value, then increase, decrease or stay the same for each column
-  const possibleDelays = Array.from({ length: 8 }, (current, i) => i * 100); // Delays are at 100ms intervals
+  const possibleDelays = Array.from({ length: 10 }, (current, i) => i * 50); // Delays are at 100ms intervals
   let baseDelayIndex = getRandomInt(0, possibleDelays.length);
 
   for (let i = 0; i < newCanvasInfo.getColumnsLength(); i++) {
@@ -146,7 +146,7 @@ const getNextIndex = (currentIndex, possibleValues) => {
 const startMelt = (pageSelected) => {
   const mainWidth = mainEl.offsetWidth;
   const mainHeight = mainEl.offsetHeight;
-  console.log('container', canvasContainerEl);
+  // console.log('container', canvasContainerEl);
   const newCanvasInfo = new CanvasInfo(0, []);
   html2canvas(pageContainerEl, { width: mainWidth, height: mainHeight, scale: 1 }).then(function(canvas) {
     canvasContainerEl.insertBefore(canvas, canvasContainerEl.firstChild);
